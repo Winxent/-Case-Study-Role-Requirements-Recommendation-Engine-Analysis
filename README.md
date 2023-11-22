@@ -5,7 +5,7 @@ A new Role Requirements recommendation engine has been developed, and the team i
 
 ## Primary Metrics:
 ### Role Requirements adoption rate 
-(indicating the selection of at least one question)
+Indicating the selection of at least one question.
 
 ### Average number of questions selected.' 
 The analysis is performed at the job level.
@@ -53,7 +53,7 @@ https://docs.google.com/spreadsheets/d/1dkjsWNVxcEcjm-Q7F9PuQKqj_ni66tWG/edit?us
 <img width="559" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/73f7c9a1-bc27-4d96-b986-7d58f72dfcd1">
 
 SQL:
-
+```
 UPDATE `CaseStudy.data_combined`
 SET is_selected = 0
 WHERE selected_order IS NULL;
@@ -61,44 +61,108 @@ WHERE selected_order IS NULL;
 UPDATE `CaseStudy.data_combined`
 SET is_selected = 1
 WHERE selected_order IS NOT NULL;
-
+```
 ## 2. Removing Irrelevant column
 
 * question_version: not a key factor in your analysis.
 * question_algorithm_id: Not focusing on the specific algorithms recommending questions.
 * job_mode: Which the job ad was new or copy is not crucial for analysis.
 * country: only one country
-
+```
 ALTER TABLE `CaseStudy.data_role_rec`
 DROP COLUMN question_version,
 DROP COLUMN question_algorithm_id,
 DROP COLUMN job_mode,
 DROP COLUMN country;
-
+```
 ## 3. Combine the tables and create a new table, removing data that are not in the experiment
-
+```
 SELECT * FROM
 casestudy.data_role_rec r
 JOIN casestudy.data_experiment e
 ON r.job_id=e.job_id;
-
+```
 ## 4. Creating additional table for num_questions_selected
 
 Assist in Data Visualisation in Tableau
 Assist in calculating Average number of questions
 
 <img width="371" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/280db1bd-1e9f-4301-a37a-a683850624b8">
-
+```
 SELECT
 job_id,
 SUM(is_selected) AS num_questions_selected
 FROM CaseStudy.data_combined
 GROUP BY job_id
 HAVING num_questions_selected > 0
-
+```
 ![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
 
 # Analysis
+
+## Role Requirements adoption rate 
+<img width="579" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/9413eb33-7370-4844-935b-c8952fa625cc">
+
+<img width="565" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/acb7d3d4-3d4b-480b-9dbd-5ef371ea2e91">
+```
+WITH agg AS (
+SELECT
+intent,
+experiment_id,
+experiment_group,
+COUNT(DISTINCT a.job_id) AS total_jobs,
+COUNT(DISTINCT b.Job_id) AS selected_jobs
+FROM `CaseStudy.data_combined` a
+LEFT JOIN
+`CaseStudy.num_questions_selected` b
+ON a.job_id = b.job_id
+GROUP BY intent,experiment_id,
+experiment_group
+)
+SELECT
+intent,
+experiment_id,
+experiment_group,
+selected_jobs / total_jobs AS
+adoption_rate
+FROM agg
+ORDER BY
+intent,experiment_id,experiment_group;
+```
+Firstly, aggregate using a CTE, then divide selected_job / total_jobs to get the adoption rate.
+
+## Average number of questions selected.
+<img width="802" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/a0ff7f15-ad4e-49ef-8ee8-70662b633ea6">
+
+<img width="536" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/0fd63ef7-b201-4714-bbfb-6a209f4a327e">
+```
+WITH agg AS (
+SELECT
+job_id,
+intent,
+experiment_id,
+experiment_group
+FROM `CaseStudy.data_combined`
+GROUP BY job_id,intent,experiment_id,experiment_group
+)
+SELECT
+intent,
+experiment_id,
+experiment_group,
+AVG(num_questions_selected)
+FROM agg a
+JOIN `CaseStudy.num_questions_selected` n
+ON a.job_id = n.job_id
+GROUP BY intent,experiment_id, experiment_group
+ORDER BY intent,experiment_id, experiment_group
+```
+
+# Data Visualisation: 
+
+https://public.tableau.com/views/CaseStudy_17003221354370/CaseStudy?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link
+
+## Overview
+
 
 
 
