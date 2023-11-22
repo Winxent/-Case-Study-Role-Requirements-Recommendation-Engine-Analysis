@@ -3,14 +3,15 @@ Hirers can use Role Requirements, a product facilitating candidate screening dur
 
 A new Role Requirements recommendation engine has been developed, and the team is conducting an experiment (id = AU-1rr-A/B) to assess its impact on key metrics. The experiment, initiated on June 21st, is anticipated to run for several weeks. 
 
-# Primary Metrics:
-## Role Requirements adoption rate 
+## Primary Metrics:
+### Role Requirements adoption rate 
 (indicating the selection of at least one question)
 
-## Average number of questions selected.' 
+### Average number of questions selected.' 
 The analysis is performed at the job level.
 
-# Objective:
+## Objective:
 Preliminary analysis to provide insights into the ongoing experiment (challenger 'B' vs. champion 'A') involving the new Role Requirements recommendation engine. 
 
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
 
