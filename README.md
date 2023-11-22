@@ -107,27 +107,24 @@ HAVING num_questions_selected > 0
 ```
 WITH agg AS (
 SELECT
+job_id,
 intent,
 experiment_id,
-experiment_group,
-COUNT(DISTINCT a.job_id) AS total_jobs,
-COUNT(DISTINCT b.Job_id) AS selected_jobs
-FROM `CaseStudy.data_combined` a
-LEFT JOIN
-`CaseStudy.num_questions_selected` b
-ON a.job_id = b.job_id
-GROUP BY intent,experiment_id,
 experiment_group
+FROM `CaseStudy.data_combined`
+GROUP BY job_id,intent,experiment_id,experiment_group
 )
 SELECT
 intent,
 experiment_id,
 experiment_group,
-selected_jobs / total_jobs AS
-adoption_rate
-FROM agg
-ORDER BY
-intent,experiment_id,experiment_group;
+COUNT (n.job_id )/ COUNT(a.job_id) AS adoption_rate
+FROM agg a
+LEFT JOIN `CaseStudy.num_questions_selected` n
+ON a.job_id = n.job_id
+GROUP BY intent,experiment_id, experiment_group
+ORDER BY intent,experiment_id, experiment_group
+
 ```
 Firstly, aggregate using a CTE, then divide selected_job / total_jobs to get the adoption rate.
 
