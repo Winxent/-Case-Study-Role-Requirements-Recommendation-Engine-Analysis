@@ -52,7 +52,6 @@ https://docs.google.com/spreadsheets/d/1dkjsWNVxcEcjm-Q7F9PuQKqj_ni66tWG/edit?us
 
 <img width="559" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/73f7c9a1-bc27-4d96-b986-7d58f72dfcd1">
 
-SQL:
 ```
 UPDATE `CaseStudy.data_combined`
 SET is_selected = 0
@@ -62,12 +61,14 @@ UPDATE `CaseStudy.data_combined`
 SET is_selected = 1
 WHERE selected_order IS NOT NULL;
 ```
+
 ## 2. Removing Irrelevant column
 
 * question_version: not a key factor in your analysis.
 * question_algorithm_id: Not focusing on the specific algorithms recommending questions.
 * job_mode: Which the job ad was new or copy is not crucial for analysis.
 * country: only one country
+
 ```
 ALTER TABLE `CaseStudy.data_role_rec`
 DROP COLUMN question_version,
@@ -75,19 +76,23 @@ DROP COLUMN question_algorithm_id,
 DROP COLUMN job_mode,
 DROP COLUMN country;
 ```
+
 ## 3. Combine the tables and create a new table, removing data that are not in the experiment
+
 ```
 SELECT * FROM
 casestudy.data_role_rec r
 JOIN casestudy.data_experiment e
 ON r.job_id=e.job_id;
 ```
+
 ## 4. Creating additional table for num_questions_selected
 
 Assist in Data Visualisation in Tableau
 Assist in calculating Average number of questions
 
 <img width="371" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/280db1bd-1e9f-4301-a37a-a683850624b8">
+
 ```
 SELECT
 job_id,
@@ -104,6 +109,7 @@ HAVING num_questions_selected > 0
 <img width="579" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/9413eb33-7370-4844-935b-c8952fa625cc">
 
 <img width="565" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/acb7d3d4-3d4b-480b-9dbd-5ef371ea2e91">
+
 ```
 WITH agg AS (
 SELECT
@@ -124,14 +130,15 @@ LEFT JOIN `CaseStudy.num_questions_selected` n
 ON a.job_id = n.job_id
 GROUP BY intent,experiment_id, experiment_group
 ORDER BY intent,experiment_id, experiment_group
-
 ```
+
 Firstly, aggregate using a CTE, then divide selected_job / total_jobs to get the adoption rate.
 
 ## Average number of questions selected.
 <img width="802" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/a0ff7f15-ad4e-49ef-8ee8-70662b633ea6">
 
 <img width="536" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/0fd63ef7-b201-4714-bbfb-6a209f4a327e">
+
 ```
 WITH agg AS (
 SELECT
@@ -153,13 +160,112 @@ ON a.job_id = n.job_id
 GROUP BY intent,experiment_id, experiment_group
 ORDER BY intent,experiment_id, experiment_group
 ```
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
 
-# Data Visualisation: 
+# Data Visualisation (Tableau): 
 
 https://public.tableau.com/views/CaseStudy_17003221354370/CaseStudy?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link
 
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
+
 ## Overview
 
+<img width="1398" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/f9132ea3-a783-4686-81bf-3e3d976a2871">
 
+The preliminary analysis of the ongoing experiment indicates distinct patterns in key metrics between Condition A and Condition B. Condition A consistently exhibits a larger data size and a higher adoption rate compared to Condition B. Interestingly, despite these advantages, users in Condition B tend to select fewer questions on average than those in Condition A.
 
+Exploring further, an examination of data size concerning hirers and ads could offer valuable insights into the distribution and sources of the data, providing a more granular understanding of user engagement patterns. It's essential to consider whether specific hirers or types of job ads contribute disproportionately to the dataset, influencing the observed trends.
 
+Daily trends reveal interesting dynamics. For AU-1rr-AB, data size shows a dip on weekends and a subsequent increase on weekdays, suggesting variations in user engagement based on the day of the week. In contrast, AU-test-AB exhibits a decreasing trend, signaling potential challenges or issues in data collection, which could impact the reliability of the analysis.
+
+When it comes to adoption rate and average questions selected, AU-1rr-AB demonstrates a constant trend over time, indicating stable user behavior. However, the analysis for AU-test-AB is hindered by a lack of sufficient data, making it challenging to draw meaningful conclusions about trends in user behavior for this condition.
+
+In summary, the comparative analysis of A and B underscores the importance of understanding not only overall performance but also the nuances in user behavior and data distribution. Further exploration of data sources and the incorporation of additional information could contribute to a more comprehensive and accurate assessment of the role requirements recommendation engine's effectiveness.
+
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
+
+## Overview Trend
+
+<img width="1387" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/a370f0f0-4ff7-4a1a-8429-4e40773757c6">
+
+### Data Size Trend
+The data size trend between the AU-1rr-AB and AU-test-AB experiments indicates that AU-1rr-AB has a larger dataset compared to AU-test-AB, with 'A' outperforming 'B'. However, it's important to note a potential limitation in the analysis of 'B' due to a lack of sufficient data.
+
+### Adoption Rate Trend
+In terms of the adoption rate, AU-1rr-AB demonstrates that 'A' surpasses 'B'. Unfortunately, the analysis for AU-test-AB is hindered by insufficient and incomplete data, making it challenging to draw conclusive trends.
+
+### Average Questions Selected Trend
+Similarly, the average questions selected trend in AU-1rr-AB shows that 'A' is performing better than 'B'. Again, the analysis for AU-test-AB is hindered by a lack of data, making it challenging to establish a clear trend.
+
+### Overall Trend Analysis
+In the overall trend analysis, it's observed that there is less data available on the weekends (22nd, 23rd, 29th June), and there are variations in experiment IDs, start and end dates, as well as sample sizes. AU-test-AB exhibits a downtrend, possibly due to a shortage of data, particularly on 'B'.
+
+### Summary
+In summary, the preliminary analysis indicates positive trends for 'A' in data size, adoption rate, and average questions selected, while limitations in data availability and completeness hinder a conclusive assessment for 'B', particularly in the case of AU-test-AB. The analysis suggests the need for further data collection and evaluation to draw more robust conclusions.
+
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
+
+## Adoption Rate
+
+<img width="1394" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/8f1bf630-40df-4271-9d1d-81e5f99b9ff9">
+
+### Overall Adoption Rate
+The comprehensive examination of adoption rates across various dimensions in the AU-1rr-AB and AU-test-AB experiments provides valuable insights into user preferences. In terms of overall adoption rate, Condition A consistently outperforms Condition B in both experiments, suggesting a universal preference for the current version of the product over the new recommendation engine.
+
+### Intent Adoption Rate
+When delving into the intent adoption rate, focusing on candidate information, qualifications, skills, and experience, again, Condition A maintains a superiority over B in both experiments. This trend is also observed in the category adoption rates, with the exception of the "Induction" category in AU-1rr-AB, where B outperforms A, albeit with a small sample size. Notably, for AU-test-AB, data is unavailable for the "Induction" category.
+
+### Category Adoption Rate
+Examining specific categories, such as "Industry Experience" and "Language," reveals that B outperforms A in the former in both experiments, while A surpasses B in the latter, particularly in AU-test-AB. In the majority of categories, however, A consistently outshines B.
+
+### Conclusion: A>B
+In conclusion, the overall trend points towards a clear preference among hirers for adopting the current version (A) over the new recommendation engine (B). Group A appears to have a more appealing and effective presentation of role requirements, leading to a higher adoption rate among hirers. This underscores the significance of refining the new engine to align more closely with the features that make Group A more favorable to users.
+
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
+
+## Average Questions Selected
+
+<img width="1386" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/48344a4d-c365-411c-86ef-17b859774397">
+
+### Overall Average Questions Selected
+The analysis of average questions selected across various dimensions in the AU-1rr-AB and AU-test-AB experiments sheds light on hirers' engagement preferences. Surprisingly, contrary to the adoption rate trend, the overall average questions selected reveals that in both experiments, Condition B surpasses Condition A. This indicates that while Condition A enjoys higher adoption rates, hirers engaging with Condition B tend to select a greater number of questions on average.
+
+### Intent Average Questions Selected
+Examining intent-specific average questions selected for candidate information, qualifications, skills, and experience, once again, Condition B outperforms A in both experiments. The trend persists in the category-specific analysis, with notable exceptions in the "Induction" category of AU-1rr-AB, where A outperforms B, and the absence of data for the same category in AU-test-AB.
+
+### Category Average Questions Selected
+In specific categories like "Technique" in AU-test-AB and broader categories such as "Technology & Tools" and "Work Environment" in AU-1rr-AB, Condition B consistently sees higher average questions selected compared to A. Despite the majority of categories favoring B, it's essential to acknowledge the nuanced differences observed.
+
+### Conclusion
+In conclusion, the data suggests that hirers engaging with the new recommendation engine (B) are able to select a higher average number of questions. This is particularly intriguing given the lower overall adoption rate for B. The conclusion drawn is that Group B, with its broader set of role requirement questions, facilitates a more detailed exploration by hirers, leading to a higher average number of questions selected despite a lower adoption rate. This underscores the importance of understanding the nuanced preferences and interactions of hirers with different features of the recommendation engine.
+
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
+
+## Display Questions
+
+<img width="1392" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/773dcabf-76be-49d7-acab-d2c7e7586718">
+
+### Insight on how the engine works
+An in-depth exploration into the workings of the role requirement recommendation AI engine unveils crucial insights into its display order, quantity of displayed questions, and the adoption rates associated with each question in the displayed order. The engine's algorithm determines the sequence in which role requirement questions are presented to hirers, influencing their decision-making process. The quantity of displayed questions contributes to the overall user experience, impacting hirers' interactions with the system.
+
+### Adoption rate on each questions of each display order
+Further analysis delves into the adoption rates for each question within the specific display order. This examination provides a nuanced understanding of how individual questions are received and accepted by hirers. Such insights are invaluable for refining the recommendation engine, ensuring that questions with higher adoption rates are prioritized and optimizing the overall user experience.
+
+### Insight Selected order
+In addition to understanding the engine's functioning, an examination of the insight-selected order sheds light on hirers' preferred order of selecting questions. The frequency of selection for specific orders provides a snapshot of hirers' preferences, offering valuable feedback for tailoring the display sequence to better align with user expectations.
+
+### Conclusion
+In conclusion, this comprehensive analysis offers a deeper understanding of the role requirement recommendation AI engine's mechanics and hirers' preferences. By scrutinizing display orders, question quantities, adoption rates, and selected orders, the insights gained pave the way for refining the engine to better cater to the preferences and needs of hirers, ultimately enhancing the effectiveness of the recommendation process.
+
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
+
+# Conclusion
+
+## Adoption Rate
+The evaluation of adoption rates and average questions selected in the AU-1rr-AB and AU-test-AB experiments yields distinct observations. In both cases, Group A consistently outperforms Group B in terms of adoption rates, indicating that hirers find the presentation of role requirements in Group A more appealing and effective, leading to a higher adoption rate.
+
+## Average Questions Selected 
+However, the analysis takes an interesting turn when considering the average questions selected. Despite Group A's higher adoption rate, Group B surpasses A in the average number of questions selected. This discrepancy is attributed to Group B's provision of a broader set of role requirement questions, encouraging hirers to delve deeper into the available options despite the lower overall adoption rate.
+
+## A or B?
+In conclusion, Champion A maintains its superiority over Challenger B in the role requirement recommendation engine. Despite the broader set of questions and higher average questions selected in Group B, the higher adoption rate of Group A signifies that it remains more effective in presenting role requirements to hirers. The slight difference in average questions selected does not outweigh the significance of A's consistently higher adoption rate, reaffirming its status as the preferred choice for hirers.
