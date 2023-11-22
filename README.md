@@ -46,7 +46,59 @@ https://docs.google.com/spreadsheets/d/1dkjsWNVxcEcjm-Q7F9PuQKqj_ni66tWG/edit?us
 
 <img width="857" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/0bc71536-6bb1-43d0-911c-95066d55754d">
 
-Inconsistent data entry
+## 1. Inconsistent data entry
 * Selected_order should only be populated when is_selected is 1
 * Is_selected is 1, but there is no selected_order
+
+<img width="559" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/73f7c9a1-bc27-4d96-b986-7d58f72dfcd1">
+
+SQL:
+
+UPDATE `CaseStudy.data_combined`
+SET is_selected = 0
+WHERE selected_order IS NULL;
+
+UPDATE `CaseStudy.data_combined`
+SET is_selected = 1
+WHERE selected_order IS NOT NULL;
+
+## 2. Removing Irrelevant column
+
+* question_version: not a key factor in your analysis.
+* question_algorithm_id: Not focusing on the specific algorithms recommending questions.
+* job_mode: Which the job ad was new or copy is not crucial for analysis.
+* country: only one country
+
+ALTER TABLE `CaseStudy.data_role_rec`
+DROP COLUMN question_version,
+DROP COLUMN question_algorithm_id,
+DROP COLUMN job_mode,
+DROP COLUMN country;
+
+## 3. Combine the tables and create a new table, removing data that are not in the experiment
+
+SELECT * FROM
+casestudy.data_role_rec r
+JOIN casestudy.data_experiment e
+ON r.job_id=e.job_id;
+
+## 4. Creating additional table for num_questions_selected
+
+Assist in Data Visualisation in Tableau
+Assist in calculating Average number of questions
+
+<img width="371" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/280db1bd-1e9f-4301-a37a-a683850624b8">
+
+SELECT
+job_id,
+SUM(is_selected) AS num_questions_selected
+FROM CaseStudy.data_combined
+GROUP BY job_id
+HAVING num_questions_selected > 0
+
+![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
+
+# Analysis
+
+
 
