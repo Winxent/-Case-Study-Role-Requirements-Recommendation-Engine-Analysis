@@ -22,12 +22,19 @@ Combined filtered table:
 <img width="889" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/2daa912e-56da-4c0f-bddd-e98c2cf341b1">
 
 Hirer_id: 446458
+
 ad_id: 39361797
+
 Date posted: 29th June 2019
+
 Recommendation engine displayed questions and order: As displayed in the table
+
 Selected Questions by hirer: Pre-employment Criteria, Work Availability
+
 Selected order by hire: Work Availability, Pre-employment Criteria
+
 Experiment id: AU-1rr-A/B
+
 Experiment Group: A
 
 Raw data:
