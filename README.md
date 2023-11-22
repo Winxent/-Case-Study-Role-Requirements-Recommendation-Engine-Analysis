@@ -42,4 +42,11 @@ https://docs.google.com/spreadsheets/d/1dkjsWNVxcEcjm-Q7F9PuQKqj_ni66tWG/edit?us
 
 ![rainbow](https://github.com/Winxent/portfolio/assets/146320825/5dc438d2-e138-4db0-97a0-e5ae8c3473e8)
 
+# Data Wrangling
+
+<img width="857" alt="image" src="https://github.com/Winxent/-Case-Study-Role-Requirements-Recommendation-Engine-Analysis/assets/146320825/0bc71536-6bb1-43d0-911c-95066d55754d">
+
+Inconsistent data entry
+* Selected_order should only be populated when is_selected is 1
+* Is_selected is 1, but there is no selected_order
 
